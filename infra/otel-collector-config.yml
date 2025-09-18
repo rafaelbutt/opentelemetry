@@ -32,6 +32,6 @@ service:
       exporters: [prometheus]
     traces:
       receivers: [otlp]
-      processors: [batch]
+      processors: [batch, attributes]
       # exporters: [otlp]
       exporters: [debug]
