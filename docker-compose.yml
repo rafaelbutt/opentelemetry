@@ -1,6 +1,20 @@
 version: "1.0"
 services:
 
+  prometheus:
+    image: prom/prometheus:latest
+    command:
+      - --config.file=/etc/prometheus.yaml
+      - --web.enable-remote-write-receiver
+      - --enable-feature=otlp-write-receiver
+      - --enable-feature=exemplar-storage
+      - --enable-feature=native-histograms
+    volumes:
+      - ./infra/prometheus.yaml:/etc/prometheus.yaml
+      - /etc/localtime:/etc/localtime:ro
+      - ./data/prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
   opentelemetry-collector:
     hostname: opentelemetry-collector
     image: otel/opentelemetry-collector:latest
@@ -37,18 +51,3 @@ services:
     links:
       - opentelemetry-collector
       - prometheus
-
-  prometheus:
-    image: prom/prometheus:latest
-    command:
-      - --config.file=/etc/prometheus.yaml
-      - --web.enable-remote-write-receiver
-      - --enable-feature=otlp-write-receiver
-      - --enable-feature=exemplar-storage
-      - --enable-feature=native-histograms
-    volumes:
-      - ./infra/prometheus.yaml:/etc/prometheus.yaml
-      - /etc/localtime:/etc/localtime:ro
-      - ./data/prometheus-data:/prometheus
-    ports:
-      - "9090:9090"
